@@ -16,7 +16,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+
+        
+        //現在のノーティフケーションを全て削除
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
+    //これがないとpermissionエラー
+        application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Sound, .Alert, .Badge], categories: nil))
+
         return true
+    }
+    
+    // 起動中に通知を受信した時とバックグラウンドから復帰した時の動作
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        
+        // アプリ起動中(フォアグラウンド)に通知が届いた場合
+        if (application.applicationState == UIApplicationState.Active) {
+            
+            var alert = UIAlertView()
+            alert.title = "アラートのタイトル"
+            alert.message = "アラートの本文"
+            notification.alertAction = "OK"
+            alert.addButtonWithTitle(notification.alertAction!)
+            alert.show()
+            
+            print("アプリ起動中(フォアグラウンド)に通知が届いた場合")
+            
+            // アプリがバックグラウンドから復帰した場合
+        } else if (application.applicationState == UIApplicationState.Inactive) {
+            print("アプリがバックグラウンドから復帰した場合")
+        } 
+    }
+    
+    func application(application: UIApplication, handleActionWithIdentifier identifier: String?, forLocalNotification notification: UILocalNotification, completionHandler: () -> Void) {
+        
+        let alert = UIAlertController(title: "通知", message: "非アクティブなのに受け取った", preferredStyle: .Alert)
     }
 
     func applicationWillResignActive(application: UIApplication) {
